@@ -15,9 +15,7 @@ def bundle(lstm_iter):
     if lstm_iter is None:
         return None
     lstm_iter = tuple(lstm_iter)
-    if lstm_iter[0] is None:
-        return None
-    return torch.cat(lstm_iter, 0).chunk(2, 1)
+    return None if lstm_iter[0] is None else torch.cat(lstm_iter, 0).chunk(2, 1)
 
 
 class Bottle(nn.Module):
@@ -60,8 +58,7 @@ class Reduce(nn.Module):
         lstm_in += self.right(right[0])
         if hasattr(self, 'track'):
             lstm_in += self.track(tracking[0])
-        out = unbundle(tree_lstm(left[1], right[1], lstm_in))
-        return out
+        return unbundle(tree_lstm(left[1], right[1], lstm_in))
 
 
 class Tracker(nn.Module):
@@ -172,7 +169,7 @@ class SNLIClassifier(nn.Module):
         mlp_in_size = 4 * feat_in_size
         mlp = [nn.Linear(mlp_in_size, config.d_mlp), self.relu,
                nn.BatchNorm1d(config.d_mlp), self.mlp_dropout]
-        for i in range(config.n_mlp_layers - 1):
+        for _ in range(config.n_mlp_layers - 1):
             mlp.extend([nn.Linear(config.d_mlp, config.d_mlp), self.relu,
                         nn.BatchNorm1d(config.d_mlp), self.mlp_dropout])
         mlp.append(nn.Linear(config.d_mlp, config.d_out))
@@ -190,5 +187,4 @@ class SNLIClassifier(nn.Module):
             prem_trans = hypo_trans = None
         premise = self.encoder(prem_embed, prem_trans)
         hypothesis = self.encoder(hypo_embed, hypo_trans)
-        scores = self.out(self.merger(premise, hypothesis))
-        return scores
+        return self.out(self.merger(premise, hypothesis))

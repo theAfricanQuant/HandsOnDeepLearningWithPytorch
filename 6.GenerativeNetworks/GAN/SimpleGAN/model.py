@@ -11,7 +11,7 @@ def mnist_data():
     compose = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5,), (0.5,))])
-    out_dir = '{}/dataset'.format(DATA_FOLDER)
+    out_dir = f'{DATA_FOLDER}/dataset'
     return datasets.MNIST(root=out_dir, train=True, transform=compose, download=True)
 
 
@@ -182,9 +182,8 @@ num_test_samples = 16
 test_noise = noise(num_test_samples)
 
 
-for epoch in range(num_epochs):
-    for n_batch, (real_batch, _) in enumerate(data_loader):
-
+for _ in range(num_epochs):
+    for real_batch, _ in data_loader:
         # 1. Train Discriminator
         real_data = images_to_vectors(real_batch).to(device)
         # Generate fake data

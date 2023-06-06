@@ -79,5 +79,4 @@ class RNNClassifier(nn.Module):
         hypo_embed = self.embed(batch.hypothesis)
         premise = self.encoder(prem_embed)
         hypothesis = self.encoder(hypo_embed)
-        scores = self.classifier((premise, hypothesis))
-        return scores
+        return self.classifier((premise, hypothesis))

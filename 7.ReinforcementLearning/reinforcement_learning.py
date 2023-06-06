@@ -87,16 +87,12 @@ def select_action(state):
     steps_done += 1
 
     sample = random.random()
-    if sample > eps_threshold:
-
-        # freeze the network and get predictions
-        with torch.no_grad():
-            return policy_net(state).max(1)[1].view(1, 1)
-
-    else:
-
+    if sample <= eps_threshold:
         # select random action
         return torch.tensor([[random.randrange(2)]], device=device, dtype=torch.long)
+    # freeze the network and get predictions
+    with torch.no_grad():
+        return policy_net(state).max(1)[1].view(1, 1)
 
 
 Transition = namedtuple('Transition',
@@ -179,7 +175,7 @@ for i_episode in range(num_episodes):
     current_screen = get_screen()
     state = current_screen - last_screen
 
-    for t in count():  # for each timestep in an episode
+    for _ in count():
         # Select action for the given state and get rewards
         action = select_action(state)
         _, reward, done, _ = env.step(action.item())
@@ -188,11 +184,7 @@ for i_episode in range(num_episodes):
         # Observe new state
         last_screen = current_screen
         current_screen = get_screen()
-        if not done:
-            next_state = current_screen - last_screen
-        else:
-            next_state = None
-
+        next_state = current_screen - last_screen if not done else None
         # Store the transition in memory
         memory.push(state, action, next_state, reward)
 

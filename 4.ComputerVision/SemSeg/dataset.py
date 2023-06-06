@@ -22,12 +22,12 @@ class CamvidDataSet(data.Dataset):
         try:
             input_files.remove('labels')
         except ValueError:
-            raise FileNotFoundError("Couldn't find 'labels' folder in {}".format(path))
+            raise FileNotFoundError(f"Couldn't find 'labels' folder in {path}")
         self.files = []
         for file in input_files:
             name, ext = os.path.splitext(file)
             input_file = os.path.join(inputdir_path, file)
-            label_file = os.path.join(labledir_path, '{}_L{}'.format(name, ext))
+            label_file = os.path.join(labledir_path, f'{name}_L{ext}')
             self.files.append({'input': input_file, 'label': label_file})
         mean = [104.00699, 116.66877, 122.67892]  # found from meetshah1995/pytorch-semseg
         std = [255, 255, 255]

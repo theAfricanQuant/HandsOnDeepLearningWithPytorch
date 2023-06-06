@@ -73,7 +73,7 @@ best_dev_acc = -1
 train_iter.repeat = False
 
 model.train()
-for epoch in range(epochs):
+for _ in range(epochs):
     train_iter.init_epoch()
     n_correct, n_total = 0, 0
     for batch_idx, batch in enumerate(train_iter):
@@ -98,7 +98,7 @@ for epoch in range(epochs):
             model.eval()
             dev_iter.init_epoch()
             n_dev_correct, dev_loss = 0, 0
-            for dev_batch_idx, dev_batch in enumerate(dev_iter):
+            for dev_batch in dev_iter:
                 answer = model(dev_batch)
                 n_dev_correct += (torch.max(
                     answer, 1)[1].view(

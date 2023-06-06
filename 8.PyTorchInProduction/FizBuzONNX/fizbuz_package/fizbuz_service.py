@@ -28,10 +28,7 @@ class MXNetModelService(object):
             0: 'FizBuz',
             1: 'Buz',
             2: 'Fiz'}
-        if prediction == 3:
-            return input_num
-        else:
-            return input_output_map[prediction]
+        return input_num if prediction == 3 else input_output_map[prediction]
 
     def initialize(self, context):
         # todo - check batch size and read it from the message
@@ -50,8 +47,6 @@ class MXNetModelService(object):
 
         model_files_prefix = self.get_model_files_prefix(context)
 
-        data_names = []
-        data_shapes = []
         input_data = self.signature["inputs"][0]
         data_name = input_data["data_name"]
         data_shape = input_data["data_shape"]
@@ -61,10 +56,9 @@ class MXNetModelService(object):
         for idx in range(len(data_shape)):
             if data_shape[idx] == 0:
                 data_shape[idx] = 1
-        data_names.append(data_name)
-        data_shapes.append((data_name, tuple(data_shape)))
-
-        checkpoint_prefix = "{}/{}".format(model_dir, model_files_prefix)
+        data_names = [data_name]
+        data_shapes = [(data_name, tuple(data_shape))]
+        checkpoint_prefix = f"{model_dir}/{model_files_prefix}"
         # Load MXNet module
         self.mxnet_ctx = mx.cpu() if gpu_id is None else mx.gpu(gpu_id)
         sym, arg_params, aux_params = mx.model.load_checkpoint(
@@ -82,11 +76,9 @@ class MXNetModelService(object):
         # todo - assert batch size
 
         param_name = self.signature['inputs'][0]['data_name']
-        data = batch[0].get('body').get(param_name)
-        if data:
+        if data := batch[0].get('body').get(param_name):
             self.input = data + 1
-            tensor = mx.nd.array([self.binary_encoder(self.input, input_size=10)])
-            return tensor
+            return mx.nd.array([self.binary_encoder(self.input, input_size=10)])
         self.error = 'InvalidData'
 
     def inference(self, model_input):
@@ -114,8 +106,7 @@ class MXNetModelService(object):
         prediction = self.get_readable_output(
             self.input,
             int(inference_output[0].argmax(1).asscalar()))
-        out = [{'next_number': prediction}]
-        return out
+        return [{'next_number': prediction}]
 
     def handle(self, data, context):
         try:

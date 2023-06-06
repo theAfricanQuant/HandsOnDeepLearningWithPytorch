@@ -112,7 +112,7 @@ for epoch in range(epochs):
             model.eval()
             dev_iter.init_epoch()
             n_dev_correct, dev_loss = 0, 0
-            for dev_batch_idx, dev_batch in enumerate(dev_iter):
+            for dev_batch in dev_iter:
                 answer = model(dev_batch)
                 n_dev_correct += (torch.max(
                     answer, 1)[1].view(dev_batch.label.size()).data == dev_batch.label.data).sum()

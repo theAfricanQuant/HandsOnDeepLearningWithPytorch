@@ -32,7 +32,7 @@ print(w1.grad, w1.grad_fn, w1)
 b1 = torch.zeros(1, hidden_size, requires_grad=True, device=device, dtype=dtype)
 b2 = torch.zeros(1, output_size, requires_grad=True, device=device, dtype=dtype)
 
-no_of_batches = int(len(trX) / batches)
+no_of_batches = len(trX) // batches
 for epoch in range(epochs):
     for batch in range(no_of_batches):
         start = batch * batches
@@ -106,8 +106,8 @@ with torch.no_grad():
     for i in range(len(teX)):
         num = decoder(teX[i])
         print(
-            'Number: {} -- Actual: {} -- Prediction: {}'.format(
-                num, check_fizbuz(num), outli[hyp[i].max(0)[1].item()]))
+            f'Number: {num} -- Actual: {check_fizbuz(num)} -- Prediction: {outli[hyp[i].max(0)[1].item()]}'
+        )
     print('Test loss: ', output.item() / len(x))
     accuracy = hyp.max(1)[1] == y.max(1)[1]
     print('accuracy: ', accuracy.sum().item() / len(accuracy))

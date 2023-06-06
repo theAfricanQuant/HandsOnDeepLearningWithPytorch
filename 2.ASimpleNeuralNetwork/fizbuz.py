@@ -77,8 +77,8 @@ with torch.no_grad():
     for i in range(len(teX)):
         num = decoder(teX[i])
         print(
-            'Number: {} -- Actual: {} -- Prediction: {}'.format(
-                num, check_fizbuz(num), outli[hyp[i].max(0)[1].item()]))
+            f'Number: {num} -- Actual: {check_fizbuz(num)} -- Prediction: {outli[hyp[i].max(0)[1].item()]}'
+        )
     print('Test loss: ', output.item() / len(x))
     accuracy = hyp.max(1)[1] == y
     print('accuracy: ', accuracy.sum().item() / len(accuracy))

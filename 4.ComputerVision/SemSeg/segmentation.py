@@ -35,11 +35,11 @@ loss_fn = nn.NLLLoss()
 def create_image(out):
     """ Creating image from the outbatch """
     img = out[0].max(0)[1].data.cpu().numpy()
-    misc.imsave('{}.png'.format(time.time()), img)
+    misc.imsave(f'{time.time()}.png', img)
 
 
 def save_model(model):
-    torch.save(model.state_dict(), '{}.pth'.format(time.time()))
+    torch.save(model.state_dict(), f'{time.time()}.pth')
 
 
 for epoch in range(epochs):

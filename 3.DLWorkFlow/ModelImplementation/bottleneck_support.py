@@ -89,8 +89,8 @@ y = torch.from_numpy(trY).type(dtype)
 net = FizBuzNet(input_size, 4)
 loss_fn = nn.MSELoss()
 optimizer = optim.Adam(net.parameters(), lr=lr)
-x_ = x[0:10]
-y_ = y[0:10]
+x_ = x[:10]
+y_ = y[:10]
 hyp = net(x_)
 loss = loss_fn(hyp, y_)
 loss.backward()

@@ -28,9 +28,7 @@ def one_hot_encode(data, channels=256):
 
 
 def one_hot_decode(data, axis=1):
-    decoded = np.argmax(data, axis=axis)
-
-    return decoded
+    return np.argmax(data, axis=axis)
 
 
 def mu_law_encode(audio, quantization_channels=256):
@@ -55,9 +53,7 @@ def mu_law_decode(output, quantization_channels=256):
     mu = float(quantization_channels - 1)
 
     expanded = (output / quantization_channels) * 2. - 1
-    waveform = np.sign(expanded) * (np.exp(np.abs(expanded) * np.log(mu + 1)) - 1) / mu
-
-    return waveform
+    return np.sign(expanded) * (np.exp(np.abs(expanded) * np.log(mu + 1)) - 1) / mu
 
 
 class Dataset(data.Dataset):
@@ -69,7 +65,7 @@ class Dataset(data.Dataset):
         self.trim = trim
 
         self.root_path = data_dir
-        self.filenames = [x for x in sorted(os.listdir(data_dir))]
+        self.filenames = list(sorted(os.listdir(data_dir)))
 
     def __getitem__(self, index):
         filepath = os.path.join(self.root_path, self.filenames[index])
@@ -116,8 +112,7 @@ class DataLoader(data.DataLoader):
         self.collate_fn = self._collate_fn
 
     def calc_sample_size(self, audio):
-        return self.sample_size if len(audio[0]) >= self.sample_size\
-                                else len(audio[0])
+        return min(len(audio[0]), self.sample_size)
 
     @staticmethod
     def _variable(data):

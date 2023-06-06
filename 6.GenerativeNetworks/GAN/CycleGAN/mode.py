@@ -26,8 +26,8 @@ class ImageDataset(Dataset):
         self.transform = transforms.Compose(transforms_)
         self.unaligned = unaligned
 
-        self.files_A = sorted(glob.glob(os.path.join(root, '%sA' % mode) + '/*.*'))
-        self.files_B = sorted(glob.glob(os.path.join(root, '%sB' % mode) + '/*.*'))
+        self.files_A = sorted(glob.glob(f"{os.path.join(root, f'{mode}A')}/*.*"))
+        self.files_B = sorted(glob.glob(f"{os.path.join(root, f'{mode}B')}/*.*"))
 
     def __getitem__(self, index):
         item_A = self.transform(Image.open(self.files_A[index % len(self.files_A)]))
@@ -223,13 +223,12 @@ class ReplayBuffer():
             if len(self.data) < self.max_size:
                 self.data.append(element)
                 to_return.append(element)
+            elif random.uniform(0, 1) > 0.5:
+                i = random.randint(0, self.max_size - 1)
+                to_return.append(self.data[i].clone())
+                self.data[i] = element
             else:
-                if random.uniform(0, 1) > 0.5:
-                    i = random.randint(0, self.max_size - 1)
-                    to_return.append(self.data[i].clone())
-                    self.data[i] = element
-                else:
-                    to_return.append(element)
+                to_return.append(element)
         return torch.cat(to_return)
 
 
@@ -316,8 +315,8 @@ logger = Logger(opt.n_epochs, len(dataloader))
 
 
 ###### Training ######
-for epoch in range(opt.epoch, opt.n_epochs):
-    for i, batch in enumerate(dataloader):
+for _ in range(opt.epoch, opt.n_epochs):
+    for batch in dataloader:
         # Set model input
         real_A = input_A.copy_(batch['A'])
         real_B = input_B.copy_(batch['B'])

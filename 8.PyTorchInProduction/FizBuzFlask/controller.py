@@ -11,10 +11,7 @@ def get_readable_output(input_num, prediction):
         0: 'FizBuz',
         1: 'Buz',
         2: 'Fiz'}
-    if prediction == 3:
-        return input_num
-    else:
-        return input_output_map[prediction]
+    return input_num if prediction == 3 else input_output_map[prediction]
 
 
 def binary_encoder():

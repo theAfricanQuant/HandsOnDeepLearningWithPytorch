@@ -26,5 +26,4 @@ def get_args():
         "--cuda", type=bool, default=torch.cuda.is_available(),
         help='CUDA availability check')
     parser.add_argument('--size', type=int, default=256, help='crop to this size')
-    args = parser.parse_args(args=[])
-    return args
+    return parser.parse_args(args=[])

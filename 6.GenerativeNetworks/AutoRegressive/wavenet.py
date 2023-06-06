@@ -29,7 +29,7 @@ class ResidualStack(torch.nn.Module):
     def __init__(self, layer_size, stack_size, res_channels, skip_channels):
         super().__init__()
         self.res_blocks = torch.nn.ModuleList()
-        for s in range(stack_size):
+        for _ in range(stack_size):
             for l in range(layer_size):
                 dilation = 2 ** l
                 block = ResidualBlock(res_channels, skip_channels, dilation)
